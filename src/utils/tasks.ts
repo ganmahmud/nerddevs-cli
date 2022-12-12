@@ -7,7 +7,7 @@ const prompt = require('prompt');
 
 export async function giveAttendance(): Promise<void> {
     if (!isValidaConfig(config)) {
-        console.log('Invalid configuretion. Please run "nerd configure"');
+        console.log('Invalid configuration. Please run the "configure" command');
         return;
     }
     const username = config.username as string;
