@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+      "module": "commonjs",
+      "declaration": true,
+      "removeComments": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "allowSyntheticDefaultImports": true,
+      "resolveJsonModule": true,
+      "target": "es2020",
+      "sourceMap": true,
+      "rootDir": "src",
+      "outDir": "./dist",
+      "strict": true,
+      "baseUrl": "./",
+      "incremental": true,
+      "paths": {
+          "@/*": ["./src/*"],
+          "@test/*": ["./test/*"]
+      }
+  }
+}

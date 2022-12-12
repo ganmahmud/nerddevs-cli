@@ -1,0 +1,29 @@
+{
+  "name": "nerd",
+  "version": "1.0.0",
+  "description": "CLI to give work attendance",
+  "main": "./dist/index.js",
+  "bin": {
+    "nerd": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gan Mahmud",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^9.4.1",
+    "figlet": "^1.5.2",
+    "path": "^0.12.7",
+    "prompt": "^1.3.0",
+    "puppeteer": "^19.2.2"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.5.5",
+    "@types/node": "^18.11.9",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  }
+}
