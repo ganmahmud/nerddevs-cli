@@ -1,3 +1,5 @@
+# Nerd CLI
+
 Nerd CLI is a command line interface for giving work attendance. With Nerd CLI, you can quickly and easily log your attendance for the day and configure your login details.
 
 ## Installation
