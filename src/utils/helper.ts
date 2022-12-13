@@ -1,6 +1,7 @@
 const { Console } = require('console');
 const { Transform } = require('stream');
 const { writeFileSync } = require('fs');
+const { Buffer } = require('buffer');
 const fs = require("fs");
 
 export function logTable(data: ObjectLiteral): void {
@@ -20,11 +21,15 @@ export function logTable(data: ObjectLiteral): void {
   console.log(result.trim());
 }
 
-export function setConfig(config: ObjectLiteral): void {
+export function setConfig(config: ConfigLiteral): void {
   const path = './nerd.json';
+  const encrypted = {
+    username: config.username,
+    password: encryptString(config.password)
+  }
 
   try {
-      writeFileSync(path, JSON.stringify(config, null, 2), 'utf8');
+      writeFileSync(path, JSON.stringify(encrypted, null, 2), 'utf8');
       console.log('Configuration successfully saved to disk');
   } catch (error) {
       console.log('An error has occurred during saving configuration', error);
@@ -42,6 +47,20 @@ export function isValidaConfig(config: ObjectLiteral): boolean {
 export function processLog(msg: string): void {
   process.stdout.write(`${msg}\r`);
 }
+
+export function encryptString(text: string): string {
+  return Buffer.from(text).toString('base64');
+}
+
+export function decryptString(text: string): string {
+  return Buffer.from(text, 'base64').toString('utf8');
+}
+
 export interface ObjectLiteral {
-    [key: string]: any;
+  [key: string]: any;
+}
+
+export interface ConfigLiteral {
+  username: string;
+  password: string;
 }

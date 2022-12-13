@@ -1,6 +1,6 @@
-import { isValidaConfig, ObjectLiteral, processLog, setConfig } from '../utils/helper';
+import { decryptString, isValidaConfig, ObjectLiteral, processLog, setConfig } from '../utils/helper';
 import * as puppeteer from 'puppeteer';
-import { logTable } from './helper';
+import { logTable, ConfigLiteral } from './helper';
 const config = require("../..//nerd.json");
 const prompt = require('prompt');
 
@@ -11,7 +11,7 @@ export async function giveAttendance(): Promise<void> {
         return;
     }
     const username = config.username as string;
-    const password = config.password as string;
+    const password = decryptString(config.password as string);
     const browser = await puppeteer.launch({
         headless: true // false to show the browser
     });
@@ -73,7 +73,7 @@ export function startPrompt(): void {
         conform: function (value: string) {
           return true;
         }
-        }], function (err: any, result: { username: string; password: string; }) {
+        }], function (err: any, result: ConfigLiteral) {
         setConfig(result);
       });
 }
