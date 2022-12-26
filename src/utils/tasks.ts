@@ -1,4 +1,4 @@
-import { decryptString, isValidaConfig, ObjectLiteral, processLog, setConfig } from '../utils/helper';
+import { colorLog, decryptString, isAttendanceDone, isValidaConfig, ObjectLiteral, processLog, setConfig } from '../utils/helper';
 import * as puppeteer from 'puppeteer';
 import { logTable, ConfigLiteral } from './helper';
 const config = require("../..//nerd.json");
@@ -16,41 +16,58 @@ export async function giveAttendance(): Promise<void> {
         headless: true // false to show the browser
     });
     const page = await browser.newPage();
-    processLog('\r⠋ Launching');
+    processLog('\r⠋ Launching', 'yellow');
     await page.goto('https://app.bikribatta.com/#single-user-attendance-take', { waitUntil: 'load' });
     await page.type('#username', username);
     await page.type('#password', password);
     await page.click('#login');
-    processLog('⠋ Signing in');
+    processLog('⠋ Signing in', 'yellow');
     await page.waitForNavigation({ waitUntil: 'networkidle0' });
-    await page.type('#password', password);
-    await page.click('#save-attendance');
-    processLog('⠋ Providing attendance');
-    const response = await page.waitForResponse(response => response.url() == 'https://app.bikribatta.com/single-user-attendance');
-    const networkResponse = await response.json();
-    const operationStatus = networkResponse.success ? 'Successful' : 'Failed';
-    processLog(`✓ ${operationStatus}`);
-    let terminalReponse:ObjectLiteral[];
-    if (networkResponse.success) {
-        const {message, data: {updatedAt, ipAddress}} = networkResponse;
-        const parsedDate = new Date(updatedAt).toLocaleDateString('en-us', {
-            weekday: "long",
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric" 
-        });
-        terminalReponse = [
-            { 'Status': operationStatus, 'Last Entry': parsedDate },
-        ];
+    const checkData = await page.waitForResponse(response => response.url() == 'https://app.bikribatta.com/single-user-attendance');
+    const firstReponse = await checkData.json();
+    const lastEntry = firstReponse.data.attendances?.[0].updatedAt;
+    const isAlreadyGiven = isAttendanceDone(lastEntry);
+    const givenDate = new Date(lastEntry).toLocaleDateString('en-us', {
+        weekday: "long",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric" 
+    });
+    if (isAlreadyGiven) {
+        colorLog('green', `Attendance already given today at ${givenDate}`);
     } else {
-        terminalReponse = [
-            { 'Status': operationStatus, 'Message': networkResponse.message }
-        ];
+        await page.type('#password', password);
+        await page.click('#save-attendance');
+        processLog('⠋ Providing attendance', 'yellow');
+        const response = await page.waitForResponse(response => response.url() == 'https://app.bikribatta.com/single-user-attendance');
+        const networkResponse = await response.json();
+        const operationStatus = networkResponse.success ? 'Successful' : 'Failed';
+        processLog(`✓ ${operationStatus}`, networkResponse.success ? 'green' : 'red');
+        let terminalReponse:ObjectLiteral[];
+        if (networkResponse.success) {
+            const {data: {updatedAt}} = networkResponse;
+            const parsedDate = new Date(updatedAt).toLocaleDateString('en-us', {
+                weekday: "long",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                second: "numeric" 
+            });
+            terminalReponse = [
+                { 'Status': operationStatus, 'Last Entry': parsedDate },
+            ];
+        } else {
+            terminalReponse = [
+                { 'Status': operationStatus, 'Message': networkResponse.message }
+            ];
+        }
+        logTable(terminalReponse);
     }
-    logTable(terminalReponse);
     browser.close();
 }
 

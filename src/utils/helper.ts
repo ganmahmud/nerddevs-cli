@@ -44,9 +44,18 @@ export function isValidaConfig(config: ObjectLiteral): boolean {
   }
   return false;
 }
-export function processLog(msg: string): void {
-  process.stdout.write(`${msg}\r`);
+export function processLog(msg: string, color?: 'red' | 'green' | 'yellow' | 'reset'): void {
+  const colorCodes = {
+    reset: '\x1b[0m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m'
+  };
+
+  const colorCode = color ? colorCodes[color] : colorCodes['reset'];
+  process.stdout.write(`${colorCode}${msg}${colorCode}\r`);
 }
+
 
 export function encryptString(text: string): string {
   return Buffer.from(text).toString('base64');
@@ -63,4 +72,15 @@ export interface ObjectLiteral {
 export interface ConfigLiteral {
   username: string;
   password: string;
+}
+
+export function isAttendanceDone(lastEntry: string): boolean {
+  const currentDate = new Date();
+  const updatedAtDate = new Date(lastEntry);
+  return currentDate.toDateString() === updatedAtDate.toDateString();
+}
+
+export function colorLog(color: string, text: string): void {
+  const fontColor = color === 'red' ? '\x1b[31m%s\x1b[0m' : '\x1b[1m\x1b[32m%s\x1b[0m';
+  console.log(fontColor, text);
 }
