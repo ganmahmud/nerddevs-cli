@@ -27,15 +27,7 @@ export async function giveAttendance(): Promise<void> {
     const firstReponse = await checkData.json();
     const lastEntry = firstReponse.data.attendances?.[0].updatedAt;
     const isAlreadyGiven = isAttendanceDone(lastEntry);
-    const givenDate = new Date(lastEntry).toLocaleDateString('en-us', {
-        weekday: "long",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric" 
-    });
+    const givenDate = new Date(lastEntry).toLocaleDateString('en-us');
     if (isAlreadyGiven) {
         colorLog('green', `Attendance already given today at ${givenDate}`);
     } else {
