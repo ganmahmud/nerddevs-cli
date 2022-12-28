@@ -1,6 +1,6 @@
 # Nerd CLI
 
-Nerd CLI is a command line interface for giving work attendance. With Nerd CLI, you can quickly and easily log your attendance for the day and configure your login details.
+Nerd CLI is a command line interface for giving work attendance. With Nerd CLI, you can quickly and easily log your attendance for the day.
 
 ## Installation
 To install Nerd CLI, first make sure that you have Node.js installed on your system. Then, open a terminal window and run the following command to install the package:
