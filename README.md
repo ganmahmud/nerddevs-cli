@@ -58,3 +58,7 @@ Nerd CLI uses the following third-party packages:
 - [path](https://nodejs.org/api/path.html): A core Node.js module for working with file paths
 - [prompt](https://github.com/flatiron/prompt): A library for prompting the user for input
 - [puppeteer](https://github.com/puppeteer/puppeteer): A library for controlling a headless Chrome instance
+
+## Change Log
+
+-   `2.0.0`: Upgraded to node 18.13.0 and Fixed page loading issue 

@@ -12,17 +12,23 @@ export async function giveAttendance(): Promise<void> {
     }
     const username = config.username as string;
     const password = decryptString(config.password as string);
+
     const browser = await puppeteer.launch({
         headless: true // false to show the browser
     });
     const page = await browser.newPage();
+    page.setDefaultNavigationTimeout( 90000 );
     processLog('\r⠋ Launching', 'yellow');
     await page.goto('https://app.bikribatta.com/#single-user-attendance-take', { waitUntil: 'load' });
     await page.type('#username', username);
     await page.type('#password', password);
-    await page.click('#login');
+    await page.evaluate(() => {
+        const buttonEl = document.querySelector('#login') as HTMLElement | null;
+        if (buttonEl) {
+            buttonEl.click();
+        }
+    });
     processLog('⠋ Signing in', 'yellow');
-    await page.waitForNavigation({ waitUntil: 'networkidle0' });
     const checkData = await page.waitForResponse(response => response.url() == 'https://app.bikribatta.com/single-user-attendance');
     const firstReponse = await checkData.json();
     const lastEntry = firstReponse.data.attendances?.[0].updatedAt;
@@ -32,7 +38,12 @@ export async function giveAttendance(): Promise<void> {
         colorLog('green', `Attendance already given today at ${givenDate}`);
     } else {
         await page.type('#password', password);
-        await page.click('#save-attendance');
+        await page.evaluate(() => {
+            const buttonEl = document.querySelector('#save-attendance') as HTMLElement | null;
+            if (buttonEl) {
+                buttonEl.click();
+            }
+        });
         processLog('⠋ Providing attendance', 'yellow');
         const response = await page.waitForResponse(response => response.url() == 'https://app.bikribatta.com/single-user-attendance');
         const networkResponse = await response.json();
